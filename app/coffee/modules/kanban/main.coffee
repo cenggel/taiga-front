@@ -76,6 +76,7 @@ class KanbanController extends mixOf(taiga.Controller, taiga.PageMixin, taiga.Fi
         @kanbanUserstoriesService.reset()
         @.openFilter = false
         @.selectedUss = {}
+        @.foldedSwimlane = {}
 
         return if @.applyStoredFilters(@params.pslug, "kanban-filters")
 
@@ -84,6 +85,12 @@ class KanbanController extends mixOf(taiga.Controller, taiga.PageMixin, taiga.Fi
 
         taiga.defineImmutableProperty @.scope, "usByStatus", () =>
             return @kanbanUserstoriesService.usByStatus
+
+        taiga.defineImmutableProperty @.scope, "usByStatusSwimlanes", () =>
+            return @kanbanUserstoriesService.usByStatusSwimlanes
+
+        taiga.defineImmutableProperty @.scope, "swimlanesCounter", () =>
+            return @kanbanUserstoriesService.swimlanesCounter
 
     cleanSelectedUss: () ->
         for key of @.selectedUss
@@ -221,6 +228,11 @@ class KanbanController extends mixOf(taiga.Controller, taiga.PageMixin, taiga.Fi
     toggleFold: (id) ->
         @kanbanUserstoriesService.toggleFold(id)
 
+    toggleSwimlane: (id) ->
+        @.foldedSwimlane[id] = !@.foldedSwimlane[id]
+
+        console.log(@.foldedSwimlane)
+
     isUsInArchivedHiddenStatus: (usId) ->
         return @kanbanUserstoriesService.isUsInArchivedHiddenStatus(usId)
 
@@ -303,6 +315,7 @@ class KanbanController extends mixOf(taiga.Controller, taiga.PageMixin, taiga.Fi
         params = _.merge params, @location.search()
         params.q = @.filterQ
 
+        console.log('loadUserstories - fetch')
         promise = @rs.userstories.listAll(@scope.projectId, params).then (userstories) =>
             @.notFoundUserstories = false
 
@@ -336,6 +349,7 @@ class KanbanController extends mixOf(taiga.Controller, taiga.PageMixin, taiga.Fi
 
         params = _.merge params, @location.search()
 
+        console.log('loadUserStoriesForStatus - fetch')
         return @rs.userstories.listAll(@scope.projectId, params).then (userstories) =>
             @.waitEmptyQuote () =>
                 @scope.$broadcast("kanban:shown-userstories-for-status", statusId, userstories)
@@ -370,6 +384,14 @@ class KanbanController extends mixOf(taiga.Controller, taiga.PageMixin, taiga.Fi
         @scope.pointsById = groupBy(project.points, (x) -> x.id)
         @scope.usStatusById = groupBy(project.us_statuses, (x) -> x.id)
         @scope.usStatusList = _.sortBy(project.us_statuses, "order")
+        # Fake
+        @scope.swimlinesList = [
+            {id: 0, name: 'Main'},
+            {id: 1, name: 'Test 1'},
+            {id: 2, name: 'Test 2'},
+            {id: 3, name: 'Test 3'},
+            {id: 4, name: 'Test 4'},
+        ]
 
         @scope.$emit("project:loaded", project)
         return project
