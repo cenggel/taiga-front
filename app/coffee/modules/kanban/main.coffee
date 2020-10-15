@@ -472,12 +472,21 @@ module.controller("KanbanController", KanbanController)
 
 KanbanDirective = ($repo, $rootscope) ->
     link = ($scope, $el, $attrs) ->
-        tableBodyDom = $el.find(".kanban-table-body")
+        # tableBodyDom = $el.find(".kanban-table-body")
 
-        tableBodyDom.on "scroll", (event) ->
-            target = angular.element(event.currentTarget)
-            tableHeaderDom = $el.find(".kanban-table-header .kanban-table-inner")
-            tableHeaderDom.css("left", -1 * target.scrollLeft())
+        # tableBodyDom.on "scroll", (event) ->
+        #     target = angular.element(event.currentTarget)
+        #     tableHeaderDom = $el.find(".kanban-table-header .kanban-table-inner")
+        #     tableHeaderDom.css("left", -1 * target.scrollLeft())
+
+
+#         let options = {
+#   root: document.querySelector('#scrollArea'),
+#   rootMargin: '0px',
+#   threshold: 1.0
+# }
+
+# let observer = new IntersectionObserver(callback, options);
 
         $scope.$on "$destroy", ->
             $el.off()

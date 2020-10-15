@@ -186,7 +186,6 @@ $fold-animation-duration: .1s;
     @include font-size(medium);
     display: flex;
     height: 100%;
-    width: 100%;
     .taskboard-column {
         border-radius: 4px;
         flex-basis: $column-width;
@@ -380,6 +379,7 @@ $fold-animation-duration: .1s;
 
 
 .kanban-table-swimlane {
+    max-height: 400px;
     overflow: auto;
 
     .kanban-table-header {
